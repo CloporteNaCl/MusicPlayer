@@ -1,6 +1,8 @@
 package com.centralesupelec.ipfs.ipfsplayer;
 
 import android.os.Environment;
+import android.util.Log;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.HashMap;
 public class SongsManager {
 
 
-    final String MEDIA_PATH = Environment.getExternalStorageDirectory().getPath() + "/";
+    final String MEDIA_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() + "/";
     private ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
     private String mp3Pattern = ".mp3";
     // Constructor
@@ -26,6 +28,7 @@ public class SongsManager {
         System.out.println(MEDIA_PATH);
         if (MEDIA_PATH != null) {
             File home = new File(MEDIA_PATH);
+            Log.d("PATH", Boolean.toString(home.isDirectory()));
             File[] listFiles = home.listFiles();
             if (listFiles != null && listFiles.length > 0) {
                 for (File file : listFiles) {

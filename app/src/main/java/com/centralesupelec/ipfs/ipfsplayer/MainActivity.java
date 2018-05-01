@@ -2,6 +2,7 @@ package com.centralesupelec.ipfs.ipfsplayer;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -16,8 +17,10 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 import android.widget.Button;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewFlipper mViewFlipper;
     private byte currentView;
     private Button btnPlayer;
+    private ArrayList<HashMap<String, String>> playlist;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -52,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     ListView mainList;
 
-    final String[] listContent = {"Lorelei", "Fear of the Dark"};
+    private String[] listContent;
     final int[] resID = {R.raw.lorelei, R.raw.fearofthedark};
     public static MediaPlayer mp;
     public static String title;
@@ -62,11 +66,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // Initializing variables
+
+        SongsManager sm = new SongsManager();
+        playlist = sm.getPlayList();
+        listContent = new String[playlist.size()];
+        for(int i = 0; i < playlist.size(); i++) {
+            listContent[i] = playlist.get(i).get("songTitle");
+        }
         mainList = (ListView) findViewById(R.id.songs);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listContent);
         mainList.setAdapter(adapter);
 
-        mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mainList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 /*                if (mp != null){
@@ -75,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 }*/
 
 
-                mp = MediaPlayer.create(getApplicationContext(), resID[i]);
+                mp = MediaPlayer.create(getApplicationContext(), Uri.parse(playlist.get(i).get("songPath")));
                 title = listContent[i];
 
                 Intent j = new Intent(getApplicationContext(), AndroidBuildingMusicPlayerActivity.class);
